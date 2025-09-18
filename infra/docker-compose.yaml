@@ -14,7 +14,7 @@ services:
     image: collapsegamer/foodgram_backend # Качаем с Docker Hub
     env_file: .env
     volumes:
-      - static:/backend_static
+      - static:/app/collected_static
       - media:/app/media/
     depends_on:
      - db
