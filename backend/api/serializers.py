@@ -1,5 +1,6 @@
-from rest_framework import serializers
 from django.contrib.auth import get_user_model
+from rest_framework import serializers
+
 from common.fields import Base64ImageField
 from tags.models import Tag
 from ingredients.models import Ingredient
@@ -8,7 +9,6 @@ from recipes.models import Recipe, IngredientAmount
 User = get_user_model()
 
 
-# Users
 class UserSerializer(serializers.ModelSerializer):
     is_subscribed = serializers.SerializerMethodField()
     avatar = serializers.ImageField(read_only=True)
@@ -43,7 +43,6 @@ class SetAvatarSerializer(serializers.Serializer):
         fields = ('avatar',)
 
 
-# Tags
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
