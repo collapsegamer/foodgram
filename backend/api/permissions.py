@@ -2,6 +2,11 @@ from rest_framework.permissions import BasePermission, SAFE_METHODS
 
 
 class IsAuthorOrReadOnly(BasePermission):
+    """
+    Разрешает безопасные (SAFE) методы всем пользователям,
+    но изменение — только автору объекта.
+    """
+
     def has_object_permission(self, request, view, obj):
         if request.method in SAFE_METHODS:
             return True
