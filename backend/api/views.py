@@ -39,6 +39,20 @@ class UserViewSet(viewsets.ModelViewSet):
 
     @action(
         detail=False,
+        methods=['get'],
+        permission_classes=[IsAuthenticated],
+        url_path='me',
+        url_name='me'
+    )
+    def me(self, request):
+        serializer = UserSerializer(
+            request.user,
+            context=self.get_serializer_context()
+        )
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(
+        detail=False,
         methods=['put'],
         permission_classes=[IsAuthenticated],
         url_path='me/avatar',
