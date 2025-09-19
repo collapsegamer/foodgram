@@ -33,7 +33,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated):
-        return User.objects.create_user(**validated)
+        return User.objects.create_user(**validated_data)
 
 
 class SetAvatarSerializer(serializers.Serializer):

@@ -27,12 +27,15 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     permission_classes = [IsAuthenticatedOrReadOnly]
 
+    def get_permissions(self):
+        if self.action == 'create':
+            return [AllowAny()]
+        return super().get_permissions()
+
     def get_serializer_class(self):
-        return (
-            UserCreateSerializer
-            if self.action == 'create'
-            else UserSerializer
-        )
+        if self.action == 'create':
+            return UserCreateSerializer
+        return UserSerializer
 
     @action(
         detail=False,
@@ -53,7 +56,6 @@ class UserViewSet(viewsets.ModelViewSet):
     @set_avatar.mapping.delete
     def delete_avatar(self, request):
         user = request.user
-        # удаляем поле avatar и файл из storage
         user.avatar.delete(save=True)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
