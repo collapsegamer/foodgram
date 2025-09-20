@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from common.fields import Base64ImageField
-from recipes.serializers import RecipeMinifiedSerializer
+from recipes.min_serializers import RecipeMinifiedSerializer
 from recipes.models import Recipe
 from .models import Subscription
 

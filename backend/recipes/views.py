@@ -11,9 +11,9 @@ from shortener.models import ShortLink
 from shortener.utils import generate_code
 from .models import Recipe, Favorite, ShoppingCart, RecipeIngredient
 from .serializers import (
-    RecipeListSerializer, RecipeCreateUpdateSerializer,
-    RecipeMinifiedSerializer
+    RecipeListSerializer, RecipeCreateUpdateSerializer
 )
+from .min_serializers import RecipeMinifiedSerializer
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
