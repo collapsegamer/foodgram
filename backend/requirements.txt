@@ -1,8 +1,7 @@
-Django>=3.2
-djangorestframework
+Django>=4.2,<5.0
+djangorestframework>=3.14
+Pillow>=10
 djoser
-drf-extra-fields
-Pillow
 psycopg2-binary==2.9.3
 python-dotenv
 gunicorn

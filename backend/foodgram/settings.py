@@ -40,13 +40,14 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'djoser',
-    'drf_extra_fields',
+    # 'drf_extra_fields',
     'users',
     'tags',
     'ingredients',
     'recipes',
     'api',
     'common',
+    'shortener',
 ]
 
 MIDDLEWARE = [
