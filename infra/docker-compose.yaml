@@ -30,7 +30,7 @@ services:
     env_file: .env
     volumes:
       - static:/staticfiles/
-      - media:/app/media/
+      - media:/media/
     ports:
       - 8080:80
     depends_on:

@@ -73,7 +73,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
             code = generate_code(3)
             link = ShortLink.objects.create(
                 code=code, target_path=f'/recipes/{recipe.id}/')
-        # По схеме поле 'short-link'
         base = request.build_absolute_uri('/')[:-1]
         return Response({'short-link': f'{base}/s/{link.code}'},
                         status=status.HTTP_200_OK
@@ -97,7 +96,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
                                          context={'request': request}
                                          ).data,
                 status=status.HTTP_201_CREATED)
-        # DELETE
         deleted, _ = Favorite.objects.filter(user=user, recipe=recipe).delete()
         if not deleted:
             return Response({'detail': 'Рецепта не было в избранном.'},
@@ -122,7 +120,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
                                                          'request': request}
                                                      ).data,
                             status=status.HTTP_201_CREATED)
-        # DELETE
         deleted, _ = ShoppingCart.objects.filter(
             user=user, recipe=recipe).delete()
         if not deleted:
