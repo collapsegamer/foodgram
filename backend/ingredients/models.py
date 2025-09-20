@@ -2,10 +2,12 @@ from django.db import models
 
 
 class Ingredient(models.Model):
-    name = models.CharField('Название', max_length=128, unique=True)
+    name = models.CharField('Название', max_length=128)
     measurement_unit = models.CharField('Ед. измерения', max_length=64)
 
     class Meta:
+        ordering = ['name']
+        unique_together = ('name', 'measurement_unit')
         verbose_name = 'Ингредиент'
         verbose_name_plural = 'Ингредиенты'
 

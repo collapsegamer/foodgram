@@ -2,7 +2,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 
-class CustomUser(AbstractUser):
+class User(AbstractUser):
     email = models.EmailField('email', unique=True, max_length=254)
     avatar = models.ImageField('avatar',
                                upload_to='avatars/', blank=True, null=True)
@@ -15,4 +15,16 @@ class CustomUser(AbstractUser):
         verbose_name_plural = 'Пользователи'
 
     def __str__(self):
-        return self.username
+        return self.email
+
+
+class Subscription(models.Model):
+    user = models.ForeignKey(User, related_name='subscriptions',
+                             on_delete=models.CASCADE
+                             )
+    author = models.ForeignKey(User, related_name='subscribers',
+                               on_delete=models.CASCADE
+                               )
+
+    class Meta:
+        unique_together = ('user', 'author')
