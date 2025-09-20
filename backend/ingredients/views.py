@@ -1,4 +1,4 @@
-from rest_framework import viewsets, mixins, filters
+from rest_framework import viewsets, mixins
 from api.filters import IngredientNameStartswithFilter
 from .models import Ingredient
 from .serializers import IngredientSerializer
