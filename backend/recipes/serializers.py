@@ -57,8 +57,14 @@ class RecipeListSerializer(serializers.ModelSerializer):
 
 
 class IngredientInRecipeWriteSerializer(serializers.Serializer):
-    id = serializers.IntegerField()
+    id = serializers.IntegerField(required=False)
+    ingredient = serializers.IntegerField(required=False)
     amount = serializers.IntegerField(min_value=1)
+
+    def validate(self, data):
+        if 'ingredient' in data and 'id' not in data:
+            data['id'] = data['ingredient']
+        return data
 
 
 class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
