@@ -12,16 +12,11 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Tag',
+            name='ShortLink',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=32, unique=True, verbose_name='Название')),
-                ('slug', models.SlugField(max_length=32, unique=True, verbose_name='Slug')),
+                ('code', models.CharField(max_length=16, unique=True)),
+                ('target_path', models.CharField(max_length=256)),
             ],
-            options={
-                'verbose_name': 'Тег',
-                'verbose_name_plural': 'Теги',
-                'ordering': ['id'],
-            },
         ),
     ]
