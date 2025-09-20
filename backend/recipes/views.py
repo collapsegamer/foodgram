@@ -1,4 +1,4 @@
-from django.db.models import Prefetch, Q
+from django.db.models import Prefetch
 from django.http import HttpResponse
 from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
@@ -9,7 +9,6 @@ from api.permissions import IsAuthorOrReadOnly
 from api.utils import aggregate_ingredients
 from shortener.models import ShortLink
 from shortener.utils import generate_code
-from tags.models import Tag
 from .models import Recipe, Favorite, ShoppingCart, RecipeIngredient
 from .serializers import (
     RecipeListSerializer, RecipeCreateUpdateSerializer,

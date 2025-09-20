@@ -1,3 +1,7 @@
 from django.contrib import admin
+from .models import ShortLink
 
-# Register your models here.
+
+@admin.register(ShortLink)
+class ShortLinkAdmin(admin.ModelAdmin):
+    list_display = ('id', 'code', 'target_path')

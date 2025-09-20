@@ -2,6 +2,7 @@ from rest_framework import viewsets, mixins, filters
 from .models import Ingredient
 from .serializers import IngredientSerializer
 
+
 class IngredientViewSet(mixins.ListModelMixin,
                         mixins.RetrieveModelMixin,
                         viewsets.GenericViewSet):

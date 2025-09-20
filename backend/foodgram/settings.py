@@ -165,18 +165,18 @@ DJOSER = {
         'user_create': 'users.serializers.UserCreateSerializer',
     },
 }
-#DJOSER = {
-#    'LOGIN_FIELD': 'email',
-#    'USER_CREATE_PASSWORD_RETYPE': True,
-#    'PERMISSIONS': {
-#        'user_list': ['rest_framework.permissions.AllowAny'],
-#        'user_detail': ['rest_framework.permissions.IsAuthenticatedOrReadOnly'],
-#        'user_create': ['rest_framework.permissions.AllowAny'],
-#        'set_password': ['rest_framework.permissions.IsAuthenticated'],
-#        'token_destroy': ['rest_framework.permissions.IsAuthenticated'],
-#    },
-#    'SERIALIZERS': {
-#        'user': 'api.serializers.UserSerializer',
-#        'user_create': 'api.serializers.UserCreateSerializer',
-#    },
-#}
+# DJOSER = {
+#     'LOGIN_FIELD': 'email',
+#     'USER_CREATE_PASSWORD_RETYPE': True,
+#     'PERMISSIONS': {
+#         'user_list': ['rest_framework.permissions.AllowAny'],
+#         'user_detail': ['rest_framework.permissions.IsAuthenticatedOrReadOnly'],
+#         'user_create': ['rest_framework.permissions.AllowAny'],
+#         'set_password': ['rest_framework.permissions.IsAuthenticated'],
+#         'token_destroy': ['rest_framework.permissions.IsAuthenticated'],
+#     },
+#     'SERIALIZERS': {
+#         'user': 'api.serializers.UserSerializer',
+#         'user_create': 'api.serializers.UserCreateSerializer',
+#     },
+# }
