@@ -1,4 +1,5 @@
 from rest_framework import viewsets, mixins, filters
+from api.filters import IngredientNameStartswithFilter
 from .models import Ingredient
 from .serializers import IngredientSerializer
 
@@ -8,5 +9,6 @@ class IngredientViewSet(mixins.ListModelMixin,
                         viewsets.GenericViewSet):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
-    filter_backends = [filters.SearchFilter]
+    filter_backends = [IngredientNameStartswithFilter]
     search_fields = ['^name']
+    pagination_class = None

@@ -62,8 +62,10 @@ class IngredientInRecipeWriteSerializer(serializers.Serializer):
     amount = serializers.IntegerField(min_value=1)
 
     def validate(self, data):
-        if 'ingredient' in data and 'id' not in data:
+        if 'id' not in data and 'ingredient' in data:
             data['id'] = data['ingredient']
+        if 'id' not in data:
+            raise serializers.ValidationError('Ингредиент не выбран.')
         return data
 
 
@@ -92,7 +94,9 @@ class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError('Обязательное поле.')
         seen = set()
         for item in value:
-            ingredient_id = item['id']
+            ingredient_id = item.get('id') or item.get('ingredient')
+            if not ingredient_id:
+                raise serializers.ValidationError('Ингредиент не выбран.')
             if ingredient_id in seen:
                 raise serializers.ValidationError(
                     'Ингредиенты должны быть уникальны.'
@@ -110,7 +114,7 @@ class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
         RecipeIngredient.objects.bulk_create([
             RecipeIngredient(
                 recipe=recipe,
-                ingredient_id=item['id'],
+                ingredient_id=item.get('id') or item.get('ingredient'),
                 amount=item['amount'],
             ) for item in ingredients_data
         ])
