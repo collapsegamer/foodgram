@@ -64,6 +64,32 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
         return queryset
 
+    def create(self, request, *args, **kwargs):
+        serializer = RecipeCreateUpdateSerializer(
+            data=request.data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        recipe = serializer.save()
+        read_serializer = RecipeListSerializer(
+            recipe, context={'request': request})
+        return Response(read_serializer.data, status=status.HTTP_201_CREATED)
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = RecipeCreateUpdateSerializer(
+            instance, data=request.data,
+            partial=partial, context={'request': request}
+        )
+        serializer.is_valid(raise_exception=True)
+        recipe = serializer.save()
+        read_serializer = RecipeListSerializer(
+            recipe, context={'request': request})
+        return Response(read_serializer.data, status=status.HTTP_200_OK)
+
+    def partial_update(self, request, *args, **kwargs):
+        kwargs['partial'] = True
+        return self.update(request, *args, **kwargs)
+
     @action(detail=True, methods=['get'])
     def get_link(self, request, pk=None):
         recipe = self.get_object()
