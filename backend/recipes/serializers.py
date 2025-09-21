@@ -2,31 +2,17 @@ from django.db import transaction
 from rest_framework import serializers
 
 from common.fields import Base64ImageField
+from common.serializers import UserBaseSerializer
 from ingredients.models import Ingredient
-from users.serializers import UserBaseSerializer
 from .models import Recipe, RecipeIngredient, Favorite, ShoppingCart
 from tags.serializers import TagSerializer
-
-
-class RecipeBaseSerializer(serializers.ModelSerializer):
-    """Базовый сериализатор рецепта (минимальный набор полей)."""
-    class Meta:
-        model = Recipe
-        fields = ('id', 'name', 'image', 'cooking_time')
-
-
-class RecipeMinifiedSerializer(RecipeBaseSerializer):
-    """Минифицированный сериализатор (наследуется от базового)."""
-    class Meta(RecipeBaseSerializer.Meta):
-        fields = RecipeBaseSerializer.Meta.fields
 
 
 class IngredientInRecipeReadSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(source='ingredient.id', read_only=True)
     name = serializers.CharField(source='ingredient.name', read_only=True)
     measurement_unit = serializers.CharField(
-        source='ingredient.measurement_unit', read_only=True
-    )
+        source='ingredient.measurement_unit', read_only=True)
 
     class Meta:
         model = RecipeIngredient
@@ -37,8 +23,7 @@ class RecipeListSerializer(serializers.ModelSerializer):
     tags = TagSerializer(many=True, read_only=True)
     author = UserBaseSerializer(read_only=True)
     ingredients = IngredientInRecipeReadSerializer(
-        source='recipe_ingredients', many=True, read_only=True
-    )
+        source='recipe_ingredients', many=True, read_only=True)
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
 
@@ -60,8 +45,8 @@ class RecipeListSerializer(serializers.ModelSerializer):
         request = self.context.get('request')
         if not request or request.user.is_anonymous:
             return False
-        return ShoppingCart.objects.filter(user=request.user,
-                                           recipe=obj).exists()
+        return ShoppingCart.objects.filter(
+            user=request.user, recipe=obj).exists()
 
 
 class IngredientInRecipeWriteSerializer(serializers.Serializer):

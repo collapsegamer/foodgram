@@ -1,24 +1,11 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from common.fields import Base64ImageField
-from recipes.models import Recipe
-from recipes.serializers import RecipeMinifiedSerializer
+from common.serializers import UserBaseSerializer, RecipeBaseSerializer
 from .models import Subscription
+from recipes.models import Recipe
 
 User = get_user_model()
-
-
-class UserBaseSerializer(serializers.ModelSerializer):
-    """Базовый сериализатор пользователя (минимальный набор полей)."""
-    class Meta:
-        model = User
-        fields = ('id', 'username', 'first_name', 'last_name', 'email')
-
-
-class UserMinifiedSerializer(UserBaseSerializer):
-    """Минифицированный сериализатор (наследуется от базового)."""
-    class Meta(UserBaseSerializer.Meta):
-        fields = UserBaseSerializer.Meta.fields
 
 
 class UserSerializer(UserBaseSerializer):
@@ -33,8 +20,8 @@ class UserSerializer(UserBaseSerializer):
         request = self.context.get('request')
         if not request or request.user.is_anonymous:
             return False
-        return Subscription.objects.filter(user=request.user,
-                                           author=obj).exists()
+        return Subscription.objects.filter(
+            user=request.user, author=obj).exists()
 
 
 class UserCreateSerializer(serializers.ModelSerializer):
@@ -63,11 +50,7 @@ class UserWithRecipesSerializer(UserSerializer):
 
     class Meta(UserSerializer.Meta):
         model = User
-        fields = (
-            'id', 'username', 'first_name', 'last_name', 'email',
-            'is_subscribed', 'avatar',
-            'recipes', 'recipes_count',
-        )
+        fields = (*UserSerializer.Meta.fields, 'recipes', 'recipes_count')
 
     def get_recipes(self, obj):
         request = self.context.get('request')
@@ -75,8 +58,7 @@ class UserWithRecipesSerializer(UserSerializer):
         qs = Recipe.objects.filter(author=obj)
         if limit:
             qs = qs[:int(limit)]
-        return RecipeMinifiedSerializer(qs, many=True,
-                                        context=self.context).data
+        return RecipeBaseSerializer(qs, many=True, context=self.context).data
 
     def get_recipes_count(self, obj):
         return Recipe.objects.filter(author=obj).count()

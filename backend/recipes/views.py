@@ -13,7 +13,7 @@ from .models import Recipe, Favorite, ShoppingCart, RecipeIngredient
 from .serializers import (
     RecipeListSerializer, RecipeCreateUpdateSerializer
 )
-from .min_serializers import RecipeMinifiedSerializer
+from common.serializers import RecipeBaseSerializer
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
@@ -92,9 +92,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
                                 status=status.HTTP_400_BAD_REQUEST
                                 )
             return Response(
-                RecipeMinifiedSerializer(recipe,
-                                         context={'request': request}
-                                         ).data,
+                RecipeBaseSerializer(recipe,
+                                     context={'request': request}
+                                     ).data,
                 status=status.HTTP_201_CREATED)
         deleted, _ = Favorite.objects.filter(user=user, recipe=recipe).delete()
         if not deleted:
@@ -115,10 +115,10 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 return Response({'detail': 'Рецепт уже в списке покупок.'},
                                 status=status.HTTP_400_BAD_REQUEST
                                 )
-            return Response(RecipeMinifiedSerializer(recipe,
-                                                     context={
-                                                         'request': request}
-                                                     ).data,
+            return Response(RecipeBaseSerializer(recipe,
+                                                 context={
+                                                     'request': request}
+                                                 ).data,
                             status=status.HTTP_201_CREATED)
         deleted, _ = ShoppingCart.objects.filter(
             user=user, recipe=recipe).delete()
