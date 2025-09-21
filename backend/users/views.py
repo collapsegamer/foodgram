@@ -28,6 +28,18 @@ class UserViewSet(mixins.ListModelMixin,
             return UserWithRecipesSerializer
         return UserSerializer
 
+    def create(self, request, *args, **kwargs):
+        """Регистрация пользователя с корректным JSON-ответом."""
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+        headers = self.get_success_headers(serializer.data)
+        return Response(
+            UserSerializer(user, context={'request': request}).data,
+            status=status.HTTP_201_CREATED,
+            headers=headers
+        )
+
     @action(detail=False,
             methods=['get'],
             permission_classes=[permissions.IsAuthenticated],
