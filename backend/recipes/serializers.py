@@ -85,7 +85,8 @@ class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
 
     def validate_cooking_time(self, value):
         if value < 1:
-            raise serializers.ValidationError('Минимальное время приготовления — 1.')
+            raise serializers.ValidationError(
+                'Минимальное время приготовления — 1.')
         return value
 
     @transaction.atomic
