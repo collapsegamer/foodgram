@@ -27,7 +27,7 @@ SECRET_KEY = os.getenv('SECRET_KEY', default=get_random_secret_key())
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'foodgram.practicum-work.ru', '192.168.3.52']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'foodgram.practicum-work.ru', '*']
 
 
 # Application definition
