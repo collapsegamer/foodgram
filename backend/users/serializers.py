@@ -1,30 +1,40 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from common.fields import Base64ImageField
-from recipes.min_serializers import RecipeMinifiedSerializer
 from recipes.models import Recipe
+from recipes.serializers import RecipeMinifiedSerializer
 from .models import Subscription
 
 User = get_user_model()
 
 
-class UserSerializer(serializers.ModelSerializer):
+class UserBaseSerializer(serializers.ModelSerializer):
+    """Базовый сериализатор пользователя (минимальный набор полей)."""
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'first_name', 'last_name', 'email')
+
+
+class UserMinifiedSerializer(UserBaseSerializer):
+    """Минифицированный сериализатор (наследуется от базового)."""
+    class Meta(UserBaseSerializer.Meta):
+        fields = UserBaseSerializer.Meta.fields
+
+
+class UserSerializer(UserBaseSerializer):
     is_subscribed = serializers.SerializerMethodField()
     avatar = serializers.ImageField(read_only=True)
 
-    class Meta:
+    class Meta(UserBaseSerializer.Meta):
         model = User
-        fields = ('email', 'id', 'username', 'first_name',
-                  'last_name', 'is_subscribed', 'avatar'
-                  )
+        fields = (*UserBaseSerializer.Meta.fields, 'is_subscribed', 'avatar')
 
     def get_is_subscribed(self, obj):
         request = self.context.get('request')
         if not request or request.user.is_anonymous:
             return False
         return Subscription.objects.filter(user=request.user,
-                                           author=obj
-                                           ).exists()
+                                           author=obj).exists()
 
 
 class UserCreateSerializer(serializers.ModelSerializer):
@@ -52,27 +62,21 @@ class UserWithRecipesSerializer(UserSerializer):
     recipes_count = serializers.SerializerMethodField()
 
     class Meta(UserSerializer.Meta):
+        model = User
         fields = (
-            'email',
-            'id',
-            'username',
-            'first_name',
-            'last_name',
-            'is_subscribed',
-            'avatar',
-            'recipes',
-            'recipes_count',
+            'id', 'username', 'first_name', 'last_name', 'email',
+            'is_subscribed', 'avatar',
+            'recipes', 'recipes_count',
         )
 
     def get_recipes(self, obj):
         request = self.context.get('request')
         limit = request.query_params.get('recipes_limit') if request else None
-        queryset = Recipe.objects.filter(author=obj)
+        qs = Recipe.objects.filter(author=obj)
         if limit:
-            queryset = queryset[:int(limit)]
-        return RecipeMinifiedSerializer(queryset, many=True,
-                                        context=self.context
-                                        ).data
+            qs = qs[:int(limit)]
+        return RecipeMinifiedSerializer(qs, many=True,
+                                        context=self.context).data
 
     def get_recipes_count(self, obj):
         return Recipe.objects.filter(author=obj).count()
