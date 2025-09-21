@@ -61,8 +61,9 @@ class IngredientInRecipeWriteSerializer(serializers.Serializer):
 
 class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
     ingredients = IngredientInRecipeWriteSerializer(many=True)
-    tags = serializers.ListField(child=serializers.IntegerField(), allow_empty=False)
-    image = Base64ImageField()
+    tags = serializers.ListField(
+        child=serializers.IntegerField(), allow_empty=False)
+    image = Base64ImageField(required=True)
 
     class Meta:
         model = Recipe
@@ -77,8 +78,14 @@ class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
         for item in value:
             ingredient_id = item['id']
             if ingredient_id in seen:
-                raise serializers.ValidationError('Ингредиенты должны быть уникальны.')
+                raise serializers.ValidationError(
+                    'Ингредиенты должны быть уникальны.')
             seen.add(ingredient_id)
+        return value
+
+    def validate_cooking_time(self, value):
+        if value < 1:
+            raise serializers.ValidationError('Минимальное время приготовления — 1.')
         return value
 
     @transaction.atomic
@@ -113,7 +120,7 @@ class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
             self._set_ingredients(instance, ingredients)
         return super().update(instance, validated_data)
 
-#class IngredientInRecipeWriteSerializer(serializers.Serializer):
+# class IngredientInRecipeWriteSerializer(serializers.Serializer):
 #    id = serializers.IntegerField(required=False)
 #    ingredient = serializers.IntegerField(required=False)
 #    amount = serializers.IntegerField(min_value=1)
@@ -124,9 +131,8 @@ class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
 #        if 'id' not in data:
 #            raise serializers.ValidationError('Ингредиент не выбран.')
 #        return data
-#
-#
-#class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
+
+# class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
 #    ingredients = IngredientInRecipeWriteSerializer(many=True)
 #    tags = serializers.ListField(
 #        child=serializers.IntegerField(), allow_empty=False)
@@ -185,4 +191,3 @@ class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
 #        if ingredients is not None:
 #            self._set_ingredients(instance, ingredients)
 #        return super().update(instance, validated_data)
-#
