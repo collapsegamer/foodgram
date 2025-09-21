@@ -4,6 +4,7 @@ from rest_framework import serializers
 from common.fields import Base64ImageField
 from common.serializers import UserBaseSerializer
 from ingredients.models import Ingredient
+from tags.models import Tag
 from .models import Recipe, RecipeIngredient, Favorite, ShoppingCart
 from tags.serializers import TagSerializer
 
@@ -81,6 +82,18 @@ class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError(
                     'Ингредиенты должны быть уникальны.')
             seen.add(ingredient_id)
+        return value
+
+    def validate_tags(self, value):
+        if not value:
+            raise serializers.ValidationError('Обязательное поле.')
+        if len(value) != len(set(value)):
+            raise serializers.ValidationError('Теги должны быть уникальны.')
+        missing = set(value) - set(
+            Tag.objects.filter(id__in=value).values_list('id', flat=True))
+        if missing:
+            raise serializers.ValidationError(
+                f'Теги не найдены: {sorted(missing)}')
         return value
 
     def validate_cooking_time(self, value):
