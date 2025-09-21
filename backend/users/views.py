@@ -44,7 +44,8 @@ class UserViewSet(mixins.ListModelMixin,
         serializer = SetPasswordSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = request.user
-        if not user.check_password(serializer.validated_data['current_password']):
+        if not user.check_password(
+                serializer.validated_data['current_password']):
             return Response({'current_password': ['Неверный пароль.']},
                             status=status.HTTP_400_BAD_REQUEST)
         user.set_password(serializer.validated_data['new_password'])
