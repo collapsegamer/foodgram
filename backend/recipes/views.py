@@ -164,6 +164,12 @@ class RecipeViewSet(viewsets.ModelViewSet):
         for (name, unit), amount in agg.items():
             lines.append(f'{name} — {amount} {unit}')
         content = '\n'.join(lines) if lines else 'Список покупок пуст.'
-        return HttpResponse(content, content_type='text/plain; charset=utf-8',
-                            status=200
-                            )
+        response = HttpResponse(
+            content,
+            content_type='text/plain; charset=utf-8'
+        )
+        response['Content-Disposition'] = 'attachment; filename="shopping_list.txt"'
+        return response
+    #    return HttpResponse(content, content_type='text/plain; charset=utf-8',
+    #                        status=200
+    #                        )
