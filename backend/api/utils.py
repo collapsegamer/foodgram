@@ -1,5 +1,5 @@
 from django.db.models import Sum
-from .models import RecipeIngredient
+from recipes.models import RecipeIngredient
 
 
 def aggregate_ingredients(recipes):
