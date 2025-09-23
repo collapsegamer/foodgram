@@ -106,25 +106,28 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def shopping_cart(self, request, pk=None):
         recipe = self.get_object()
         user = request.user
+
         if request.method == 'POST':
-            created = ShoppingCart.objects.get_or_create(
-                user=user, recipe=recipe)[1]
+            obj, created = ShoppingCart.objects.get_or_create(
+                user=user, recipe=recipe)
             if not created:
                 return Response({'detail': 'Рецепт уже в списке покупок.'},
-                                status=status.HTTP_400_BAD_REQUEST
-                                )
-            return Response(RecipeBaseSerializer(recipe,
-                                                 context={
-                                                     'request': request}
-                                                 ).data,
-                            status=status.HTTP_201_CREATED)
+                                status=status.HTTP_400_BAD_REQUEST)
+            return Response({
+                'recipe': RecipeBaseSerializer(
+                    recipe,
+                    context={'request': request}).data,
+                'cart_count': ShoppingCart.objects.filter(user=user).count()
+            }, status=status.HTTP_201_CREATED)
+
         deleted, _ = ShoppingCart.objects.filter(
             user=user, recipe=recipe).delete()
         if not deleted:
             return Response({'detail': 'Рецепта не было в списке покупок.'},
-                            status=status.HTTP_400_BAD_REQUEST
-                            )
-        return Response(status=status.HTTP_204_NO_CONTENT)
+                            status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {'cart_count': ShoppingCart.objects.filter(user=user).count()},
+            status=status.HTTP_204_NO_CONTENT)
 
     @action(detail=False, methods=['get'],
             permission_classes=[permissions.IsAuthenticated]
