@@ -26,9 +26,11 @@ class Recipe(models.Model):
         through='RecipeIngredient',
         related_name='recipes'
     )
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ['-id']
+        ordering = ['-created_at']
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
 
@@ -69,6 +71,9 @@ class Favorite(models.Model):
         verbose_name = 'Избранный рецепт'
         verbose_name_plural = 'Избранные рецепты'
 
+    def __str__(self):
+        return f'Избранное: {self.user.username} → {self.recipe.name}'
+
 
 class ShoppingCart(models.Model):
     user = models.ForeignKey(
@@ -86,3 +91,6 @@ class ShoppingCart(models.Model):
         unique_together = ('user', 'recipe')
         verbose_name = 'Корзина'
         verbose_name_plural = 'Корзины'
+
+    def __str__(self):
+        return f'Корзина: {self.user.username} → {self.recipe.name}'

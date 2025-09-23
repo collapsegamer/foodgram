@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from django_filters.rest_framework import DjangoFilterBackend
 
 from api.pagination import LimitPageNumberPagination
 from api.permissions import IsAuthorOrReadOnly
@@ -13,6 +14,7 @@ from .models import Recipe, Favorite, ShoppingCart, RecipeIngredient
 from .serializers import (
     RecipeListSerializer, RecipeCreateUpdateSerializer
 )
+from .filters import RecipeFilter
 from common.serializers import RecipeBaseSerializer
 
 
@@ -26,43 +28,13 @@ class RecipeViewSet(viewsets.ModelViewSet):
     pagination_class = LimitPageNumberPagination
     permission_classes = [
         permissions.IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly]
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = RecipeFilter
 
     def get_serializer_class(self):
         if self.action in ('create', 'update', 'partial_update'):
             return RecipeCreateUpdateSerializer
         return RecipeListSerializer
-
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        user = self.request.user
-        params = self.request.query_params
-
-        author_id = params.get('author')
-        if author_id:
-            queryset = queryset.filter(author_id=author_id)
-
-        # tags by slug (?tags=breakfast&tags=lunch)
-        tag_slugs = self.request.GET.getlist('tags')
-        if tag_slugs:
-            queryset = queryset.filter(tags__slug__in=tag_slugs).distinct()
-
-        # is_favorited / is_in_shopping_cart (0/1)
-        def is_true(v):
-            return v in ('1', 'true', 'True')
-        fav = params.get('is_favorited')
-        if fav is not None and user.is_authenticated:
-            if is_true(fav):
-                queryset = queryset.filter(favorited_by__user=user)
-            else:
-                queryset = queryset.exclude(favorited_by__user=user)
-        cart = params.get('is_in_shopping_cart')
-        if cart is not None and user.is_authenticated:
-            if is_true(cart):
-                queryset = queryset.filter(in_carts__user=user)
-            else:
-                queryset = queryset.exclude(in_carts__user=user)
-
-        return queryset
 
     def create(self, request, *args, **kwargs):
         serializer = RecipeCreateUpdateSerializer(
@@ -171,6 +143,3 @@ class RecipeViewSet(viewsets.ModelViewSet):
         response['Content-Disposition'] = (
             'attachment; filename="shopping_list.txt"')
         return response
-    #    return HttpResponse(content, content_type='text/plain; charset=utf-8',
-    #                        status=200
-    #                        )
