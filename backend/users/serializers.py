@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from common.fields import Base64ImageField
 from common.serializers import UserBaseSerializer, RecipeBaseSerializer
 from .models import Subscription
-from recipes.models import Recipe
+from recipes.models import Recipe, ShoppingCart
 
 User = get_user_model()
 
@@ -46,6 +46,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
 class UserWithRecipesSerializer(UserSerializer):
     recipes = serializers.SerializerMethodField()
     recipes_count = serializers.SerializerMethodField()
+    cart_count = serializers.SerializerMethodField()
 
     class Meta(UserSerializer.Meta):
         model = User
@@ -67,6 +68,13 @@ class UserWithRecipesSerializer(UserSerializer):
 
     def get_recipes_count(self, obj):
         return Recipe.objects.filter(author=obj).count()
+
+    def get_cart_count(self, obj):
+        request = self.context.get('request')
+        user = getattr(request, 'user', None)
+        if not user or not user.is_authenticated:
+            return 0
+        return ShoppingCart.objects.filter(user=user).count()
 
 
 class SetPasswordSerializer(serializers.Serializer):
