@@ -56,7 +56,13 @@ class UserWithRecipesSerializer(UserSerializer):
         limit = request.query_params.get('recipes_limit') if request else None
         qs = Recipe.objects.filter(author=obj)
         if limit:
-            qs = qs[:int(limit)]
+            try:
+                limit_value = int(limit)
+                if limit_value > 0:
+                    qs = qs[:limit_value]
+            except (ValueError, TypeError):
+                pass
+
         return RecipeBaseSerializer(qs, many=True, context=self.context).data
 
     def get_recipes_count(self, obj):
