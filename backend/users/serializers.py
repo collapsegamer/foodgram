@@ -50,7 +50,8 @@ class UserWithRecipesSerializer(UserSerializer):
 
     class Meta(UserSerializer.Meta):
         model = User
-        fields = (*UserSerializer.Meta.fields, 'recipes', 'recipes_count')
+        fields = (*UserSerializer.Meta.fields, 'recipes', 'recipes_count',
+                  'cart_count')
 
     def get_recipes(self, obj):
         request = self.context.get('request')
