@@ -9,8 +9,9 @@ services:
     env_file: .env
     volumes:
       - pg_data:/var/lib/postgresql/data
+
   backend:
-    image: collapsegamer/foodgram_backend # Качаем с Docker Hub
+    build: ../backend
     env_file: .env
     volumes:
       - static:/backend_static
@@ -19,13 +20,14 @@ services:
       - db
 
   frontend:
-    image: collapsegamer/foodgram_frontend  # Качаем с Docker Hub
+    build: ../frontend
     env_file: .env
     command: cp -r /app/build/. /frontend_static/
     volumes:
       - static:/frontend_static
+
   gateway:
-    image: collapsegamer/foodgram_gateway  # Качаем с Docker Hub
+    build: ../gateway
     env_file: .env
     volumes:
       - static:/staticfiles/
