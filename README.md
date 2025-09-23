@@ -48,6 +48,12 @@ docker compose -f docker-compose.yaml exec backend python manage.py load_ingredi
 ```
 > Поддерживаемые форматы csv и json.
 
+Создайте админскую учетку командой 
+```
+docker compose -f docker-compose.yaml exec backend python manage.py createsuperuser
+```
+
+В админской панеле создайте тэги.
 
 По адресу http://localhost/api/docs/ находится спецификация API.
 
