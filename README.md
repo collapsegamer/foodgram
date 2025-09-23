@@ -1,16 +1,16 @@
-#Foodgram
+# Foodgram
 Foodgram - приложение, с помощью которого, пользователи могут создавать рецепты, добавлять в избраное, создавать список покупок и подписываться на авторов рецептов.
 
-##Стек технологий
+## Стек технологий
 
-Django
-Dgango REST
-PostgreSQL
-Nginx
-Docker
-Gunicorn
+* Django
+* Dgango REST
+* PostgreSQL
+* Nginx
+* Docker
+* Gunicorn
 
-##Запуск
+## Запуск
 
 В папке infra есть пример файла для сборки и запуска docker-compose.yaml.example.  
 
