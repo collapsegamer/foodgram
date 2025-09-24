@@ -43,7 +43,11 @@ class RecipeViewSet(viewsets.ModelViewSet):
         recipe = serializer.save()
         read_serializer = RecipeListSerializer(
             recipe, context={'request': request})
-        return Response(read_serializer.data, status=status.HTTP_201_CREATED)
+        return Response({
+            'recipe': read_serializer.data,
+            'cart_count': ShoppingCart.objects.filter(
+                user=request.user).count()},
+            status=status.HTTP_201_CREATED)
 
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
