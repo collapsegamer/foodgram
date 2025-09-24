@@ -43,11 +43,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
         recipe = serializer.save()
         read_serializer = RecipeListSerializer(
             recipe, context={'request': request})
-        return Response({
-            'recipe': read_serializer.data,
-            'cart_count': ShoppingCart.objects.filter(
-                user=request.user).count()},
-            status=status.HTTP_201_CREATED)
+        return Response(read_serializer.data,
+                        status=status.HTTP_201_CREATED)
 
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
@@ -129,9 +126,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         if not deleted:
             return Response({'detail': 'Рецепта не было в списке покупок.'},
                             status=status.HTTP_400_BAD_REQUEST)
-        return Response(
-            {'cart_count': ShoppingCart.objects.filter(user=user).count()},
-            status=status.HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(detail=False, methods=['get'],
             permission_classes=[permissions.IsAuthenticated]
