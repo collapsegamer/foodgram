@@ -84,8 +84,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
         recipe = self.get_object()
         user = request.user
         if request.method == 'POST':
-            created = Favorite.objects.get_or_create(
-                user=user, recipe=recipe)[1]
+            obj, created = Favorite.objects.get_or_create(
+                user=user, recipe=recipe)
             if not created:
                 return Response({'detail': 'Рецепт уже в избранном.'},
                                 status=status.HTTP_400_BAD_REQUEST
