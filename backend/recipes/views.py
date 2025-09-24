@@ -114,12 +114,11 @@ class RecipeViewSet(viewsets.ModelViewSet):
             if not created:
                 return Response({'detail': 'Рецепт уже в списке покупок.'},
                                 status=status.HTTP_400_BAD_REQUEST)
-            return Response({
-                'recipe': RecipeBaseSerializer(
+            return Response(
+                RecipeBaseSerializer(
                     recipe,
                     context={'request': request}).data,
-                'cart_count': ShoppingCart.objects.filter(user=user).count()
-            }, status=status.HTTP_201_CREATED)
+                status=status.HTTP_201_CREATED)
 
         deleted, _ = ShoppingCart.objects.filter(
             user=user, recipe=recipe).delete()
